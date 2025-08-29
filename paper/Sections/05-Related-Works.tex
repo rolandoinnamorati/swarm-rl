@@ -1,0 +1,15 @@
+% Related Works
+\section{Related Works}
+    Research on autonomous unmanned aerial vehicle (UAV) swarms has progressed significantly in recent years, particularly in the context of distributed control, coordinated behavior, and intelligent targeting. Our work draws inspiration from three main lines of prior research: decentralized learning for multi-agent swarms, embedded kamikaze UAV systems, and artificial intelligence methods for friend-or-foe (IFF) classification.
+    \medskip
+
+    \cite{batra2022decentralized} demonstrated the feasibility of learning decentralized swarm behaviors via end-to-end deep reinforcement learning (DRL), enabling individual quadrotors to navigate, avoid collisions, and maintain formation in fully simulated environments. Their framework required only local observations and showed successful sim-to-real transfer on resource-constrained quadrotor platforms. However, their work was limited to general flocking and pursuit-evasion tasks, without addressing targeting logic, engagement, or threat discrimination. In contrast, our work focuses specifically on offensive kamikaze-style behaviors, integrated with IFF and attack coordination under tactical constraints.
+    \medskip
+
+    On the hardware and systems side, \cite{muda2024kamikaze} presented a physical implementation of a kamikaze drone built around the ESP32 microcontroller. Their prototype combined a GPS-guided autopilot, PID flight stabilization, and simple onboard target recognition based on distance and color segmentation. While effective for linear, single-drone attack missions, the system lacked dynamic swarm behavior and did not incorporate any learning-based adaptability or multi-agent strategy. Our approach complements this by focusing on swarm-level intelligence and decentralized coordination, which could be integrated with similar lightweight hardware platforms.
+    \medskip
+
+    Finally, the work \cite{rachman2024enemy} on IFF-based enemy detection proposes the use of neural networks trained on electromagnetic signatures to classify detected entities as friend or foe. Their AI-based model aims to support ethical engagement by reducing the risk of fratricide in autonomous operations. This concern directly aligns with our inclusion of IFF-like discrimination in the agent observation space and reward function. We build upon this by embedding such logic into reinforcement learning policies, enabling drones to not only detect but react to friendly or hostile classifications during swarm missions.
+    \medskip
+
+    Together, these works provide the foundation for our integrated framework, which unites DRL-based swarm coordination, kamikaze mission profiles, and AI-driven IFF mechanisms into a single, deployable decision-making system for offensive UAV swarms operating in adversarial environments.

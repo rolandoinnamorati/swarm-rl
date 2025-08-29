@@ -1,0 +1,46 @@
+\documentclass[twocolumn]{NobArticle}
+\runninghead{Autonomous Drone Swarms with IFF and Targeting}
+\footertext{\textit{Rolando L. Innamorati} (2025)}
+
+\title{Decentralized Learning for Autonomous Kamikaze Drone Swarms with Integrated IFF and Target Engagement in Adversarial Environments}
+
+\author{
+    Rolando Licia Innamorati\textsuperscript{1,2}
+}
+
+\date{
+    \textsuperscript{\textbf{1}}
+    Delta Service Srl
+    \textsuperscript{\textbf{2}}
+    Università degli Studi dell'Aquila
+}
+
+\renewcommand{\maketitlehookd}{
+\begin{abstract}
+    \noindent We present an integrated and decentralized learning framework for autonomous kamikaze drones equipped with friend-or-foe (IFF) classification, onboard autopilot, and swarm-level coordination. Designed for deployment on resource-constrained hardware, our system leverages end-to-end deep reinforcement learning (DRL) to train each drone to execute high-speed, collision-aware attack trajectories against mobile adversarial targets, while explicitly avoiding friendly units. Each agent operates using only local observations—including its own motion state, relative positions of nearby agents, and IFF-informed target classification—without any centralized control or global state synchronization.
+
+    Our simulation environment models sacrificial drone behavior: upon successful impact, the agent is removed from the mission space. We define a composite reward function that promotes successful hits, penalizes collisions with teammates or friendly entities, and encourages cooperative interception patterns. Experimental results show that intelligent group behaviors such as wave-based attacks, multi-angle encirclement, and selective avoidance of non-hostile targets emerge naturally from decentralized training. This demonstrates the feasibility of building self-organizing kamikaze swarms capable of friend-aware target engagement using lightweight onboard computation, laying the groundwork for practical implementation on minimalist UAV platforms.
+    \medskip
+
+    \small{\textbf{Index Terms:} Autonomous UAVs, Kamikaze Drone, Deep Reinforcement Learning, Friend-or-Foe Recognition, Swarm Warfare.}
+\end{abstract}
+}
+
+\begin{document}
+
+\small
+\maketitle
+
+\input{Sections/01-Introduction}
+\input{Sections/02-Problem-Definition}
+\input{Sections/03-Methodology}
+\input{Sections/04-Experimental-Evaluation}
+\input{Sections/05-Related-Works}
+\input{Sections/06-Ethical}
+\input{Sections/07-Conclusion}
+
+\input{Sections/Appendix}
+
+\printbibliography
+
+\end{document}

@@ -46,7 +46,7 @@ python train.py
 # 3) Replay with animation (MP4 requires ffmpeg; otherwise use GIF)
 python play.py --ckpt_dir checkpoints --out episode.mp4 --fps 6
 # or
-python play.py --ckpt_dir checkpoints --out episode.gif --fps 6
+python play.py --ckpt_dir checkpoints --out step_1.gif --fps 6
 # reproducible spawn
 python play.py --seed 42
 ```
@@ -54,13 +54,21 @@ python play.py --seed 42
 ---
 
 ## 🗺️ Roadmap (Milestones)
-- P0 — Baseline (done): single agent, static target, DQN on grid.
-- P1 — Moving targets: stochastic/strategic motion; pursuit robustness.
-- P2 — Multi-agent (decentralized): shared/independent policies, collision avoidance, task allocation.
-- P3 — Obstacles & maps: local planning with partial observability (egocentric crop); limited/noisy comms.
-- P4 — Continuous dynamics: (x,y,vx,vy) + acceleration actions; PPO/SAC; noise/latency/slip.
-- P5 — Adversarial training & IFF sim: distractors, decoys, spoofing; non-destructive “engagement” logic; safety constraints.
-- P6 — Evaluation & ablations: compare MARL methods (IPPO/MAPPO, MADDPG, QMIX/VDN), comms budgets, robustness to failures.
+- ✅ **P0 — Tiny Grid**: single agent, small 2D grid, 4 directions + stay, static target; QNet with reward shaping.
+Random execution of the trained model:
+![Episode demo](paper/Figures/step_1.gif)
+- 🛠️ **P1 — Big Grid DQN**: bigger grid (101×101), 8 directions + stay, normalized reward; stable DQN with reduced zig-zag.
+- **P2 — 2D continuous kinematics (x,y,vx,vy) + continuous actions (ax, ay)**: PPO/SAC; noise/latency/slip.
+- **P3 — Muoving Target**: stochastic/strategic motion; robustness in pursuit.
+- **P4 — Static Obstacles**: random static obstacles; collision avoidance.
+- **P5 — Moving Obstacles + Noisy**: dynamic obstacles; partial observability (egocentric crop); limited/noisy comms.
+- **P6 — Multi-agent (decentralized)**: parameter sharing or indipendent policies, collision avoidance, task/target allocation.
+- **P7 — Simplified 3D**: 3D kinematics (x,y,z,vx,vy,vz); altitude control.
+- **P8 — Single Quadrotor light-physics**: simple quadrotor model (thrust, drag, gravity).
+- **P9 — Multi Quadrotors**: decentralized multi-agent quadrotors.
+- **P10 — IFF-like module**: simulated friend-or-foe classification to avoid friendly interference.
+- **P11 — Adversarial Entities**: moving/strategic targets, distractors, counter-measures.
+- **P12 — Curriculum & Domain Randomization**: progressively harder scenarios, environment randomization.
 
 ---
 

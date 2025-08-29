@@ -1,0 +1,33 @@
+% Problem Definition
+\section{Problem Definition}
+    We consider a team of \( N \) autonomous quadrotor drones operating in a 3D simulated adversarial environment, tasked with identifying and intercepting a designated hostile target through coordinated kamikaze-style maneuvers. Each drone operates under a decentralized control policy and limited onboard sensing, with no access to global state or centralized planner. The objective is to maximize the swarm's cumulative attack effectiveness—i.e., the number and quality of successful impacts on enemy targets—while minimizing friendly-fire incidents and inefficient maneuvers.
+    \medskip
+
+    The environment is episodic, and from the global simulator perspective, the full state at time \( t \) is defined as:
+    \[
+    S(t) = \{s_i(t)\}_{i=1}^N \cup g(t)
+    \]
+    where \( s_i(t) \) is the full state of drone \( i \), and \( g(t) \) is the state of the moving adversarial target.
+    \medskip
+
+    Each agent observes only partial, local information \( o_i(t) \), which includes:
+    - its own proprioceptive state \( s_i^{\text{local}}(t) \): position, velocity, orientation;
+    - relative positions and velocities of up to \( K \) nearby drones;
+    - the relative position of the target;
+    - a binary IFF (Identification Friend or Foe) signal associated with the perceived target.
+    \medskip
+
+    Each drone \( i \) is controlled by a stochastic policy \( \pi_\theta(a_i(t) | o_i(t)) \), parameterized by a shared neural network. The action \( a_i(t) \in \mathbb{R}^4 \) corresponds to thrust commands for the quadrotor motors, producing movement according to simulated flight dynamics.
+    \medskip
+
+    Upon impact with a hostile target, the drone is considered “sacrificed” and removed from the environment. The reward function is designed to:
+    - assign a large positive reward for successful impact with a hostile target;
+    - penalize collisions with teammates or friendly-classified targets;
+    - reward proximity to the target to guide learning during early training.
+    \medskip
+
+    The episode terminates when all drones are either sacrificed or the maximum time horizon \( T \) is reached.
+    \medskip
+
+    This formulation enables the study of self-organizing kamikaze strategies, IFF-informed target discrimination, and emergent multi-agent coordination under decentralized control and limited perception.
+    \medskip

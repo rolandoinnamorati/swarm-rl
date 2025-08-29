@@ -1,0 +1,18 @@
+% Ethical Considerations
+\section{Ethical Considerations}
+    The development of autonomous weapon systems, including kamikaze drone swarms, raises significant ethical concerns related to accountability, reliability, safety, and compliance with international humanitarian law. While the present study is conducted entirely in simulation and remains within the scope of academic exploration, the underlying capabilities—autonomous target interception, decentralized decision-making, and friend-or-foe discrimination—intersect with real-world domains where lives may be at stake.
+    \medskip
+
+    A core concern involves the use of machine learning for lethal decision-making. In our system, drones are trained to autonomously select and engage targets based on onboard observations and IFF classification. Misclassification or model misbehavior could result in friendly fire incidents or unlawful engagements. These risks are exacerbated by the black-box nature of neural policies and the lack of human oversight in decentralized execution.
+    \medskip
+
+    Moreover, the kamikaze paradigm by design removes the possibility of post-engagement correction. Once launched, a drone that misidentifies its target cannot be recalled. This necessitates an extremely high standard of robustness, explainability, and fail-safety—none of which current DRL models fully guarantee.
+    \medskip
+
+    In light of this, future real-world implementations must integrate comprehensive safety mechanisms, including human-in-the-loop or human-on-the-loop protocols, formal verification of critical components, and externally enforced abort or override systems. Ethical deployment also requires adherence to the principles of necessity, proportionality, and distinction as articulated in the laws of armed conflict.
+    \medskip
+
+    While our simulation includes IFF inputs and penalizes misengagement, we emphasize that this is an abstraction. The real-world challenge of building reliable IFF modules is non-trivial and cannot be offloaded entirely to AI models. The inclusion of such mechanisms in this research should be interpreted as a placeholder for more rigorous safety architecture.
+    \medskip
+
+    We also explicitly discourage the deployment of purely autonomous lethal systems based on this or similar research without extensive ethical, legal, and operational vetting. Our goal is to explore the computational feasibility of decentralized swarm intelligence in high-stakes scenarios, not to advocate for fully unsupervised engagement models.

@@ -62,6 +62,5 @@ outputs/
 *.pt
 *.npz
 *.mp4
-*.gif
 *.png
 *.jpg
