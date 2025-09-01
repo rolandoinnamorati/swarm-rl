@@ -56,8 +56,10 @@ python play.py --seed 42
 ## 🗺️ Roadmap (Milestones)
 - ✅ **P0 — Tiny Grid**: single agent, small 2D grid, 4 directions + stay, static target; QNet with reward shaping.
 Random execution of the trained model:
-![Episode demo](paper/Figures/step_1.gif)
+<img src="paper/Figures/step_1.gif" width="300"/>
 - 🛠️ **P1 — Big Grid DQN**: bigger grid (101×101), 8 directions + stay, normalized reward; stable DQN with reduced zig-zag.
+Initial attempts:
+<img src="paper/Figures/step_2_t1.gif" width="300"/>
 - **P2 — 2D continuous kinematics (x,y,vx,vy) + continuous actions (ax, ay)**: PPO/SAC; noise/latency/slip.
 - **P3 — Muoving Target**: stochastic/strategic motion; robustness in pursuit.
 - **P4 — Static Obstacles**: random static obstacles; collision avoidance.
