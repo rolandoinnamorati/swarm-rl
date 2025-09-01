@@ -9,6 +9,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import time
+
 # -----------------------------
 # Configs
 # -----------------------------
@@ -38,6 +40,13 @@ EPS_END = 0.02
 EPS_DECAY_STEPS = 250_000 # decadimento lineare dell'epsilon
 GRAD_CLIP = 5.0
 LOG_INTERVAL = max(1, EPISODES // 10)
+
+# Verbosity
+VERBOSE = True
+LOG_STEPS = 200
+EVAL_EVERY = 200
+EVAL_EPISODES = 3
+RET_WINDOW_EP = 50
 
 rng = np.random.default_rng(SEED)
 random.seed(SEED)
@@ -125,6 +134,56 @@ class DroneEnv:
         self.prev_dist_norm = d_curr_norm
         return self._norm_obs(self.state), float(reward), bool(done), {"distance": d_curr}
 
+    @torch.no_grad()
+    def mini_eval(qnet, plane, max_steps, eps, actions, episodes=3, device=DEVICE):
+        def norm_obs(state):
+            (dx, dy), (tx, ty) = state
+            denom = max(1, plane - 1)
+            return np.array([dx, dy, tx, ty], dtype=np.float32) / denom
+
+        rng = np.random.default_rng(123)
+
+        def reset_state():
+            d = (rng.integers(0, plane), rng.integers(0, plane))
+            t = (rng.integers(0, plane), rng.integers(0, plane))
+            while d == t:
+                t = (rng.integers(0, plane), rng.integers(0, plane))
+            return (d, t)
+
+        successes, rets, steps_list = 0, [], []
+        for _ in range(episodes):
+            state = reset_state()
+            prev_dist = float(np.hypot(state[1][0] - state[0][0], state[1][1] - state[0][1]))
+            t = 0
+            ep_ret = 0.0
+            done = False
+            while not done:
+                obs = norm_obs(state)
+                q = qnet(torch.from_numpy(obs).to(device).unsqueeze(0)).squeeze(0).cpu().numpy()
+                a_id = int(np.argmax(q))
+                ax, ay = actions[a_id]
+                (x, y), (tx, ty) = state
+                nx = int(np.clip(x + ax, 0, plane - 1))
+                ny = int(np.clip(y + ay, 0, plane - 1))
+                t += 1
+                state = ((nx, ny), (tx, ty))
+                dist = float(np.hypot(tx - nx, ty - ny))
+                # reward “compatibile” con shaping normalizzato (approssimazione)
+                max_dist = float(np.hypot(plane - 1, plane - 1))
+                delta = (prev_dist / max_dist) - (dist / max_dist)
+                r = K_GAIN * delta - STEP_COST
+                ep_ret += r
+                prev_dist = dist
+                done = (dist <= eps) or (t >= max_steps)
+            successes += int(prev_dist <= eps)
+            rets.append(ep_ret)
+            steps_list.append(t)
+        return {
+            "success_rate": successes / episodes,
+            "avg_return": float(np.mean(rets)),
+            "avg_steps": float(np.mean(steps_list)),
+        }
+
 class QNet(nn.Module):
     def __init__(self, obs_dim=4, n_actions=N_ACTIONS):
         super().__init__()
@@ -179,6 +238,9 @@ def train():
     returns_window = deque(maxlen=LOG_INTERVAL)
     successes = 0
 
+    t0 = time.time()
+    ret_hist = deque(maxlen=RET_WINDOW_EP)
+
     for ep in range(1, EPISODES + 1):
         obs = env.reset()
         done = False
@@ -192,6 +254,12 @@ def train():
             obs = next_obs
             ep_return += r
             global_step += 1
+
+            if VERBOSE and (global_step % LOG_STEPS == 0):
+                eta_s = (time.time() - t0) / max(1, global_step) * (EPISODES * MAX_STEPS - global_step)
+                print(f"[step {global_step}] ep={ep} t={env.state.t} "
+                      f"dist={env.prev_dist:.2f} r_last={r:+.3f} "
+                      f"eps={linear_epsilon(global_step):.3f} ETA~{int(eta_s) // 60}m")
 
             # update
             if len(rb) >= max(BATCH_SIZE, WARMUP_STEPS):
@@ -222,10 +290,16 @@ def train():
         if env.prev_dist <= EPS_RADIUS:
             successes += 1
 
+        ret_hist.append(ep_return)
         if ep % LOG_INTERVAL == 0:
             avg_ret = float(np.mean(returns_window))
             rate = successes / ep
             print(f"[Ep {ep:4d}] avg_return={avg_ret:.3f}  eps={linear_epsilon(global_step):.3f}  success_rate={rate:.2%}")
+
+        if EVAL_EVERY and (ep % EVAL_EVERY == 0):
+            stats = mini_eval(qnet, PLANE_SIZE, MAX_STEPS, EPS_RADIUS, ACTIONS, episodes=EVAL_EPISODES)
+            print(f"   ↳ mini-eval: success={stats['success_rate']:.2%} "
+                  f"| avg_steps={stats['avg_steps']:.1f} | avg_return={stats['avg_return']:.3f}")
 
     os.makedirs("checkpoints", exist_ok=True)
     torch.save(qnet.state_dict(), "checkpoints/policy.pt")
