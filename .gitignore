@@ -57,10 +57,8 @@ venv.bak/
 .DS_Store
 Thumbs.db
 
-checkpoints/
+/checkpoints/
 outputs/
-*.pt
-*.npz
 *.mp4
 *.png
 *.jpg

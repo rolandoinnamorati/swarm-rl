@@ -1,4 +1,4 @@
-# 🚀 (Working Title) Decentralized Learning for Autonomous Kamikaze Drone Swarms with Integrated IFF and Target Engagement in Adversarial Environments
+# 🚀 Decentralized Learning for Autonomous Kamikaze Drone Swarms with Integrated IFF and Target Engagement in Adversarial Environments
 
 > ⚠️ **Ethics & Safety First.**  
 > This repository is **strictly for simulation-based research** on decentralized multi-agent reinforcement learning.  
@@ -44,11 +44,9 @@ pip install torch numpy matplotlib
 python train.py
 
 # 3) Replay with animation (MP4 requires ffmpeg; otherwise use GIF)
-python play.py --ckpt_dir checkpoints --out episode.mp4 --fps 6
+python play.py --ckpt_dir checkpoints --out episode.mp4 --no_snap
 # or
 python play.py --ckpt_dir checkpoints --out step_1.gif --fps 6
-# reproducible spawn
-python play.py --seed 42
 ```
 
 ---
@@ -56,12 +54,14 @@ python play.py --seed 42
 ## 🗺️ Roadmap (Milestones)
 - ✅ **P0 — Tiny Grid**: single agent, small 2D grid, 4 directions + stay, static target; QNet with reward shaping.
 Random execution of the trained model:
-<img src="paper/Figures/step_1.gif" width="300"/>
-- 🛠️ **P1 — Big Grid DQN**: bigger grid (101×101), 8 directions + stay, normalized reward; stable DQN with reduced zig-zag.
+![step_1](paper/Figures/step_1.gif)
+- ✅ **P1 — Big Grid DQN**: bigger grid (101×101), 8 directions + stay, normalized reward; stable DQN with reduced zig-zag.
 Initial attempts:
-<img src="paper/Figures/step_2_t1.gif" width="300"/>
-- **P2 — 2D continuous kinematics (x,y,vx,vy) + continuous actions (ax, ay)**: PPO/SAC; noise/latency/slip.
-- **P3 — Muoving Target**: stochastic/strategic motion; robustness in pursuit.
+![step_2_t2](paper/Figures/step_2_t1.gif)
+Random execution of the trained model, after optimizations:
+![step_2_t1](paper/Figures/step_2_t2.gif)
+- 🛠️ **P2 — 2D continuous kinematics (x,y,vx,vy) + continuous actions (ax, ay)**: PPO/SAC; noise/latency/slip.
+- **P3 — Moving Target**: stochastic/strategic motion; robustness in pursuit.
 - **P4 — Static Obstacles**: random static obstacles; collision avoidance.
 - **P5 — Moving Obstacles + Noisy**: dynamic obstacles; partial observability (egocentric crop); limited/noisy comms.
 - **P6 — Multi-agent (decentralized)**: parameter sharing or indipendent policies, collision avoidance, task/target allocation.
