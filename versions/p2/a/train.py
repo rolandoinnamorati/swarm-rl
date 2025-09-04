@@ -23,7 +23,6 @@ def set_global_seeds(seed: int):
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-
 class Continuous2DEnv:
     def __init__(self,
                  L: float = 100.0,

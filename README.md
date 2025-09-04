@@ -61,6 +61,8 @@ Initial attempts:
 Random execution of the trained model, after optimizations:
 ![step_2_t1](paper/Figures/step_2_t2.gif)
 - 🛠️ **P2 — 2D continuous kinematics (x,y,vx,vy) + continuous actions (ax, ay)**: PPO/SAC; noise/latency/slip.
+Phase a:
+![step_3_a_t1](paper/Figures/step_3_a_t1.gif)
 - **P3 — Moving Target**: stochastic/strategic motion; robustness in pursuit.
 - **P4 — Static Obstacles**: random static obstacles; collision avoidance.
 - **P5 — Moving Obstacles + Noisy**: dynamic obstacles; partial observability (egocentric crop); limited/noisy comms.
