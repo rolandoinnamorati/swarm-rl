@@ -263,6 +263,7 @@ def main():
             return torch.clamp(z, -self.clip, self.clip)
 
     norm = StaticNorm(mean, var)
+    env_cfg['tgt_speed'] = 9.0
 
     print(f"[PLAY P3] L={env_cfg['L']} dt={env_cfg['dt']} v_max={env_cfg['v_max']} a_max={env_cfg['a_max']} "
           f"max_steps={env_cfg['max_steps']} eps={env_cfg['eps']} tgt_speed={env_cfg['tgt_speed']} obs_dim={obs_dim} act_dim={act_dim} stochastic={args.stochastic}")
