@@ -60,10 +60,12 @@ Initial attempts:
 ![step_2_t2](paper/Figures/step_2_t1.gif)
 Random execution of the trained model, after optimizations:
 ![step_2_t1](paper/Figures/step_2_t2.gif)
-- 🛠️ **P2 — 2D continuous kinematics (x,y,vx,vy) + continuous actions (ax, ay)**: PPO/SAC; noise/latency/slip.
-Phase a:
+- ✅ **P2 — 2D continuous kinematics (x,y,vx,vy) + continuous actions (ax, ay)**: PPO/SAC; noise/latency/slip.
+Simulation:
 ![step_3_a_t1](paper/Figures/step_3_a_t1.gif)
-- **P3 — Moving Target**: stochastic/strategic motion; robustness in pursuit.
+- 🛠️ **P3 — Moving Target**: stochastic/strategic motion; robustness in pursuit.
+Simulation:
+![step_4_a_t1](paper/Figures/step_4_a_t1.gif)
 - **P4 — Static Obstacles**: random static obstacles; collision avoidance.
 - **P5 — Moving Obstacles + Noisy**: dynamic obstacles; partial observability (egocentric crop); limited/noisy comms.
 - **P6 — Multi-agent (decentralized)**: parameter sharing or indipendent policies, collision avoidance, task/target allocation.
