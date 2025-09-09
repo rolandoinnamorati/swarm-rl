@@ -11,9 +11,9 @@
             \label{eq:obs}
             \mathbf{o}_t \;=\; \frac{1}{\max(1,\,\texttt{plane}-1)}\,[\,x_t,\,y_t,\,x^{(\mathrm{tar})},\,y^{(\mathrm{tar})}\,] \in [0,1]^4,
         \end{equation}
-        with $(x_t,y_t)$ the drone cell and $(x^{(\mathrm{tar})},y^{(\mathrm{tar})})$ the target cell.\footnote{Normalization as implemented in \texttt{\_norm\_obs}, denominator $\max(1,\texttt{plane}-1)$.}
+        with $(x_t,y_t)$ the drone cell and $(x^{(\mathrm{tar})},y^{(\mathrm{tar})})$ the target cell.\footnote{Normalization as implemented in \texttt{\_norm\_obs}, denominator $\max(1,\texttt{plane}-1)$.} 
         \medskip
-
+        
         At each step, the agent selects a discrete action $a_t\in\mathcal{A}$ that moves the drone by a displacement $(\Delta x,\Delta y)$ clipped within the arena bounds; next state, Euclidean distance $d_t$, and termination are computed accordingly.\footnote{Environment step: integer grid move, clamped to $[0,\texttt{plane}-1]$, with termination on $d_t\le\varepsilon$ or $t\ge\texttt{MAX\_STEPS}$.}
 
         \subsubsection{Reward shaping.}
@@ -22,18 +22,18 @@
                 r_t \;=\; &\underbrace{K \big(\tfrac{d_{t-1}}{d_{\max}}-\tfrac{d_t}{d_{\max}}\big)}_{\text{progress (normalized)}} \;-\; \underbrace{c_{\mathrm{step}}}_{\text{step cost}}
                 \;-\; \underbrace{c_{\mathrm{turn}}\,[a_t\neq a_{t-1}]}_{\text{turn penalty}}
                 \;-\; \underbrace{c_{\mathrm{rev}}\,[s_t\in\mathcal{V}]}_{\text{revisit penalty}}, \label{eq:reward}\\
-                &\text{plus terminal terms:}\quad
+                &\text{plus terminal terms:}\quad 
                 \begin{cases}
                 +R\,(1+\tfrac{T_{\max}-t}{T_{\max}}) & \text{if } d_t\le \varepsilon \\
                 - R_{\mathrm{to}} & \text{if } t\!=\!T_{\max}
                 \end{cases}\nonumber
             \end{align}
             with $K=1.0$, $c_{\mathrm{step}}{=}0.003$, $c_{\mathrm{turn}}{=}0.002$, $c_{\mathrm{rev}}{=}0.01$, $R{=}20.0$, $R_{\mathrm{to}}{=}1.0$ in the large-grid setting; the success threshold is $\varepsilon=\max(1.0,0.005\cdot \texttt{PLANE\_SIZE})$.%
-
+            
             This is a potential-based shaping on $d_t$ (distance) plus small control-like regularizers.
 
         \subsubsection{Learning.}
-            In P0--P1 we use a neural $Q$-function $Q_\theta(\mathbf{o},a)$ trained with Double DQN and a target network. The function approximator is a 2-layer MLP (256–256 ReLU) with $|\mathcal{A}|$ outputs, Huber loss, gradient clipping, and Adam optimizer.\footnote{Architecture and update: 2-layer MLP (256,256) → $|\mathcal{A}|$; Double DQN target with online $\arg\max$ and target gather; Huber loss; grad clip at 5.0; Adam with $\mathrm{lr}=1.5\mathrm{e}{-3}$.}
+            In P0--P1 we use a neural $Q$-function $Q_\theta(\mathbf{o},a)$ trained with Double DQN and a target network. The function approximator is a 2-layer MLP (256–256 ReLU) with $|\mathcal{A}|$ outputs, Huber loss, gradient clipping, and Adam optimizer.\footnote{Architecture and update: 2-layer MLP (256,256) → $|\mathcal{A}|$; Double DQN target with online $\arg\max$ and target gather; Huber loss; grad clip at 5.0; Adam with $\mathrm{lr}=1.5\mathrm{e}{-3}$.}  
             Exploration is $\varepsilon$-greedy with linear decay $\varepsilon(s)$ from $0.25$ to $0.02$ over $150\text{k}$ steps; replay buffer size $3\!\times\!10^5$, batch $256$, $\gamma=0.99$, target sync every $2\text{k}$ updates.
 
         \subsubsection{Evaluation.}
@@ -42,13 +42,13 @@
     \subsection{P0 — Tiny Grid (small 2D grid, 4 directions + stay)}
         \subsubsection{Objective.}
             Sanity-check the full pipeline (environment, reward shaping, logging, evaluation) and verify that the learned policy develops a consistent homing behavior on a small grid with $|\mathcal{A}|=5$ (N/S/E/W + stay).
-
+        
         \subsubsection{Methodology.}
             Same $Q_\theta$ architecture (smaller action set). Reward shaping as in Eq.~\eqref{eq:reward} with the same structure; smaller arena implies a larger per-step progress signal $\Delta d/d_{\max}$ and naturally easier credit assignment.
-
+        
         \subsubsection{Results.}
             Across seeds, training curves show a monotonic rise in success with diminishing variance; representative windows reached $\approx 70\%\!\to\!90\%$ success as training proceeds (consistent with step-wise shaped returns improving over time). Qualitative rollouts show direct, low-zigzag homing; near-target corrections are mild due to the small $c_{\mathrm{turn}}$ and the positive progress term.
-
+        
         \subsubsection{Takeaways.}
             The shaping in Eq.~\eqref{eq:reward} is sufficient to break symmetry and converge quickly on small grids; the observation normalization in Eq.~\eqref{eq:obs} prevents scale issues and enables reuse on larger arenas.
 
@@ -74,9 +74,9 @@
         \subsubsection{Training configuration.}
             We train for up to $1000$ episodes with replay $3\!\times\!10^5$, batch 256, $\gamma=0.99$, Adam ($1.5\!\times\!10^{-3}$), target sync every $2000$ updates, $\varepsilon$-greedy from $0.25$ to $0.02$ over $150$k steps, gradient clip $5.0$.
             The observation normalization, termination, and evaluation are identical to training to avoid distribution shift.
-
+        
         \subsubsection{Metrics and representative outcome.}
-            We monitor success rate, shaped average return, and average steps. In a representative large-grid run, the training summary reported
+            We monitor success rate, shaped average return, and average steps. In a representative large-grid run, the training summary reported 
             \emph{[Ep 1000] avg\_return = 39.116, $\varepsilon=0.101$, success\_rate = 87.80\%}.%
             % (User-provided log)
             Qualitatively, evaluation rollouts (pure $\arg\max$) reach the target without orbiting; the reduction of $c_{\mathrm{turn}}$ removes pathological near-target zigzag and improves closure.
@@ -86,3 +86,65 @@
                 \includegraphics[scale=0.5]{Figures/step_2_t2.png}
                 \caption{Representative greedy rollout on the large grid (P1). The agent closes on the target with minimal zigzag. Animated version can be found on our \underline{\href{https://github.com/rolandoinnamorati/swarm-rl}{GitHub repository.}}}
             \end{figure}
+
+    \subsection{P2 — 2D continuous kinematics}
+
+        \subsubsection{Objective.}
+            Transition from discrete grid to continuous dynamics to validate the control stack and policy optimization in a more realistic setting while keeping the target static (moving targets are deferred to P3).
+
+        \subsubsection{Dynamics and observation.}
+            State $s_t=[x_t,y_t,v_{x,t},v_{y,t}]$, action $a_t=[a_{x,t},a_{y,t}]$ with box constraints $\|a_t\|_\infty\le a_{\max}$.
+            Discrete-time integration with step $\Delta t$:
+            \[
+                v_{t+1}=\mathrm{clip}(v_t + a_t \Delta t,\,-v_{\max},\,v_{\max}),\quad
+                p_{t+1}=\mathrm{clip}(p_t + v_{t+1}\Delta t,\, [0,L]^2).
+            \]
+            The observation concatenates normalized features
+            \[
+                \mathbf{o}_t=\big[(p^{\mathrm{tar}}{-}p_t)/L,\; v_t/v_{\max},\; \cos\theta_t,\; \sin\theta_t,\; 1{-}t/T_{\max}\big],
+            \]
+            where $\theta_t$ is the angle between $v_t$ and $(p^{\mathrm{tar}}{-}p_t)$. A running mean/variance normalizer is fit online and saved for evaluation parity.
+
+        \subsubsection{Reward shaping and termination.}
+            Let $d_t=\|p^{\mathrm{tar}}-p_t\|_2$, $d_{\max}=\sqrt{2}\,L$. Per-step reward:
+            \[
+                r_t=\alpha\,\frac{d_{t-1}-d_t}{d_{\max}}
+                     - c_{\text{step}} - \lambda_a \|a_t\|_2^2,
+            \]
+            with terminal bonus $+R\,(1{+}(T_{\max}-t)/T_{\max})$ if $d_t\le \varepsilon$ and $-R_{\text{to}}$ on timeout. This keeps the shaping potential-based on the Euclidean distance while discouraging dithering and excessive control.
+
+        \subsubsection{Learning.}
+            Proximal Policy Optimization with a diagonal Gaussian policy $\pi_\theta(a|o)=\mathcal{N}(\mu_\theta(o),\sigma_\theta)\,$ passed through $\tanh$ and rescaled to $[-a_{\max},a_{\max}]$; value head $V_\phi(o)$. Both heads share a 2-layer MLP (256–256, ReLU). We use clipped surrogate loss ($\epsilon{=}0.2$), GAE-$\lambda$ ($\gamma{=}0.99$, $\lambda{=}0.95$), entropy regularization, Adam ($3\!\times\!10^{-4}$), $n_{\text{env}}{=}16$, horizon $512$, minibatch $4096$, $10$ epochs per update.
+
+        \subsubsection{Evaluation.}
+            On $(L{=}100,\Delta t{=}0.1,v_{\max}{=}10,a_{\max}{=}5,T_{\max}{=}400,\varepsilon{=}1.0)$ with static target, the deterministic policy (mean action) consistently intercepts; a typical run reached $\textbf{100\%}$ success with median $\sim$$\mathbf{80}$ steps. The same checkpoint reproduced in \emph{play} (loading the saved normalizer) shows smooth, direct approach without zig-zag near the target.
+
+    \subsection{P3 — Moving Target \& Drone Strategic Motion}
+        \subsubsection{Objective.}
+            Stress the continuous controller with a \emph{moving} target while keeping the arena obstacle–free, separating tracking from obstacle avoidance (deferred to P4).
+
+        \subsubsection{Target dynamics.}
+            The target evolves with bounded kinematics,
+            \[
+              p^{\mathrm{tar}}_{t+1}=\Pi_{[0,L]^2}\!\big(p^{\mathrm{tar}}_t + v^{\mathrm{tar}}_t \Delta t\big),\quad
+              \|v^{\mathrm{tar}}_t\|_2\le v^{\mathrm{tar}}_{\max},
+            \]
+            with reflective boundary conditions. We instantiate a stochastic CV motion models (constant speed).
+
+        \subsubsection{Observation \& reward.}
+            The agent observes the relative displacement $(p^{\mathrm{tar}}{-}p)/L$, own velocity $v/v_{\max}$, \emph{and} target velocity $v^{\mathrm{tar}}/v_{\max}$, plus angle features and time-to-go (as in P2). Shaping extends P2 with an optional, small closing-rate term
+            \[
+              r_t=\alpha\,\tfrac{d_{t-1}-d_t}{\sqrt{2}L}\;+\;\beta\,\max\!\big(0,\,(v_t{-}v^{\mathrm{tar}}_t)\!\cdot\!\hat r_t\big)\;-\;c_{\text{step}}-\lambda_a\|a_t\|_2^2,
+            \]
+            $\hat r_t=\tfrac{p^{\mathrm{tar}}_t-p_t}{\|p^{\mathrm{tar}}_t-p_t\|_2}$, with the same terminal bonuses as P2. This favors genuine interception rather than tangential tracking.
+
+        \subsubsection{Learning \& evaluation.}
+            PPO settings are unchanged from P2. Training randomizes $v^{\mathrm{tar}}_{\max}$ in a narrow range to promote generalization; evaluation uses the deterministic policy. Qualitatively, the controller anticipates target motion and achieves reliable capture on stochastic targets, with smooth speed/heading profiles and no zig–zag near impact.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.4]{Figures/step_3_t2.png}
+            \caption{Freeze frame from random execution animation. It is possible to see how the drone initially fails to intercept the target, slows down and widens and then accelerates again, intercepting it. Animated version can be found on our \underline{\href{https://github.com/rolandoinnamorati/swarm-rl}{GitHub repository.}}}
+        \end{figure}
+
+    \subsection{P3 — Static Obstacles, Collision Avoidance}
